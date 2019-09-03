@@ -1,0 +1,15 @@
+---
+# tasks file for nginx-install
+ - name: Install nginx in RHEL/CentOS
+   yum:
+    name: nginx
+    state: latest
+   when: ansible_os_family=="RedHat"
+   notify: restart nginx
+ 
+ - name: Install nginx in Ubuntu
+   yum:
+    name: nginx
+    state: latest
+   when: ansible_os_family=="Debian"
+   notify: restart nginx
