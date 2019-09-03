@@ -5,11 +5,38 @@
     name: nginx
     state: latest
    when: ansible_os_family=="RedHat"
-   notify: restart nginx
  
  - name: Install nginx in Ubuntu
    yum:
     name: nginx
     state: latest
    when: ansible_os_family=="Debian"
+
+ - name: "Install ufw package - RHEL/CENTOS"
+   yum:
+    name: ufw
+    state: latest
+   when: ansible_os_family == "RedHat"
+
+ - name: "Install ufw package - Debian"
+   apt:
+    name: ufw
+    state: latest
+   when: ansible_os_family  == "Debian"
+
+ - name: "Start ufw service"
+   service:
+    name: ufw
+    state: started
+
+ - name: "Modifiy nginx port"
+   replace:
+    path: /etc/nginx/nginx.conf
+    regexp: '(\s+listen\s+)(80)(.*)$'
+    replace: "\1{{ nginx-custom-port }}\3"
+
+ - name: "Allow ssh port"
+   ufw:
+    rule: allow
+    port: "{{ nginx-custom-port | int }}"
    notify: restart nginx
