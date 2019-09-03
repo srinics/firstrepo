@@ -32,11 +32,11 @@
  - name: "Modifiy nginx port"
    replace:
     path: /etc/nginx/nginx.conf
-    regexp: '(\s+listen\s+)(80)(.*)$'
-    replace: "\1{{ nginx-custom-port }}\3"
+    regexp: '(listen\s+|listen\s+\[\:\:\]\:)\d+'
+    replace: '\1 {{ nginx_custom_port | string }}'
 
  - name: "Allow ssh port"
    ufw:
     rule: allow
-    port: "{{ nginx-custom-port | int }}"
+    port: "{{ nginx_custom_port | int }}"
    notify: restart nginx
